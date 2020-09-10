@@ -63,9 +63,14 @@ open class AxisBase: ComponentBase
     private var _limitLines = [ChartLimitLine]()
     
     /// Are the LimitLines drawn behind the data or in front of the data?
-    /// 
+    ///
     /// **default**: false
     @objc open var drawLimitLinesBehindDataEnabled = false
+    
+    /// Are the grid lines drawn behind the data or in front of the data?
+    ///
+    /// **default**: true
+    @objc open var drawGridLinesBehindDataEnabled = true
 
     /// the flag can be used to turn off the antialias for grid lines
     @objc open var gridAntialiasEnabled = true
@@ -161,14 +166,17 @@ open class AxisBase: ComponentBase
     {
         get
         {
-            if _axisValueFormatter == nil ||
-                (_axisValueFormatter is DefaultAxisValueFormatter &&
-                    (_axisValueFormatter as! DefaultAxisValueFormatter).hasAutoDecimals &&
-                    (_axisValueFormatter as! DefaultAxisValueFormatter).decimals != decimals)
+            if _axisValueFormatter == nil
             {
                 _axisValueFormatter = DefaultAxisValueFormatter(decimals: decimals)
             }
-            
+            else if _axisValueFormatter is DefaultAxisValueFormatter &&
+            (_axisValueFormatter as! DefaultAxisValueFormatter).hasAutoDecimals &&
+                (_axisValueFormatter as! DefaultAxisValueFormatter).decimals != decimals
+            {
+                (self._axisValueFormatter as! DefaultAxisValueFormatter).decimals = self.decimals
+            }
+
             return _axisValueFormatter
         }
         set
@@ -187,6 +195,11 @@ open class AxisBase: ComponentBase
     /// 
     /// **default**: false
     @objc open var isDrawLimitLinesBehindDataEnabled: Bool { return drawLimitLinesBehindDataEnabled }
+    
+    /// Are the grid lines drawn behind the data or in front of the data?
+    ///
+    /// **default**: true
+    @objc open var isDrawGridLinesBehindDataEnabled: Bool { return drawGridLinesBehindDataEnabled }
     
     /// Extra spacing for `axisMinimum` to be added to automatically calculated `axisMinimum`
     @objc open var spaceMin: Double = 0.0
